@@ -47,6 +47,7 @@
                         <h4 style="color: #b9b9b9;font-weight: normal;">Break Time Start: <span class="text-info" id="break_time_start">00:00 --</span></h4>
                         <h5 style="color: #b9b9b9;font-weight: normal;">Break Out: <span class="text-info" id="break_out">00:00 --</span></h5>
                         <h5 style="color: #b9b9b9;font-weight: normal;">Break In: <span class="text-info" id="break_in">00:00 --</span></h5>
+                        <a href="#" class="text-danger" onclick="reset()">Reset</a>
                         <div class="w-100 my-4">
                             <input type="button" class="btn btn-info btn-block font-weight-bold btn-lg" value="Break Out" id="break">
                         </div>
@@ -355,6 +356,15 @@
                 }
             }
             breakData()
+
+            function reset(){
+                localStorage.clear()
+                time_consume.innerHTML = '0'
+                time_text.style.display = 'none'
+                break_time_start.innerHTML = '00:00 --'
+                break_out.innerHTML = '00:00 --'
+                break_in.innerHTML = '00:00 --'
+            }
         </script>
     </body>
 </html>
