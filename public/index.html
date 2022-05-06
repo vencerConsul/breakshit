@@ -27,6 +27,9 @@
             .break-in{
                 background: #070000;
             }
+            #time_consume{
+                font-size: 120px;
+            }
         </style>
     </head>
     <body style="height:100vh;width:100%;">
@@ -37,7 +40,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-center align-items-center">
                         <div class="circle">
-                            <h1 class="text-info font-weight-bold" id="time_consume">0</h1>
+                            <h1 class="text-primary font-weight-bold" id="time_consume">0</h1>
                             <h4 style="color: #b9b9b9;display: none;" id="time_text"></h3>
                         </div>
                     </div>
@@ -49,7 +52,7 @@
                         <h5 style="color: #b9b9b9;font-weight: normal;">Break In: <span class="text-info" id="break_in">00:00 --</span></h5>
                         <a href="#" class="text-danger" onclick="reset()">Reset</a>
                         <div class="w-100 my-4">
-                            <input type="button" class="btn btn-info btn-block font-weight-bold btn-lg" value="Break Out" id="break">
+                            <input type="button" class="btn btn-primary btn-block font-weight-bold btn-lg" value="Break Out" id="break">
                         </div>
                     </div>
                 </div>
