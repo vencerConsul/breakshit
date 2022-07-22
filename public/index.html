@@ -30,6 +30,9 @@
             #time_consume{
                 font-size: 120px;
             }
+            .card{
+                background-color: #f0f0ff !important;
+            }
         </style>
     </head>
     <body style="height:100vh;width:100%;">
@@ -39,29 +42,64 @@
             <div class="card text-left my-4 bg-transparent w-100 border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-center align-items-center">
-                        <div class="circle">
-                            <h1 class="text-primary font-weight-bold" id="time_consume">0</h1>
+                        <div class="circle shadow-lg">
+                            <h1 class="text-secondary font-weight-bold" id="time_consume">0</h1>
                             <h4 style="color: #b9b9b9;display: none;" id="time_text"></h3>
                         </div>
                     </div>
                     <h5 class="card-title my-2 text-center" style="color: #b9b9b9;font-weight: 200;" id="current_time">Loading....</h5>
+                    <center><a href="#" class="text-center btn btn-sm btn-danger" onclick="reset()">Reset</a></center>
                     <hr>
                     <div class="my-4">
-                        <h4 style="color: #b9b9b9;font-weight: normal;">Break Time Start: <span class="text-info" id="break_time_start">00:00 --</span></h4>
-                        <h5 style="color: #b9b9b9;font-weight: normal;">Break Out: <span class="text-info" id="break_out">00:00 --</span></h5>
-                        <h5 style="color: #b9b9b9;font-weight: normal;">Break In: <span class="text-info" id="break_in">00:00 --</span></h5>
-                        <a href="#" class="text-danger" onclick="reset()">Reset</a>
+                        <div class="row">
+                            <div class="col-lg-4 d-flex flex-column align-items-center text-center">
+                                <div class="card border-0 shadow-lg w-100">
+                                    <div class="card-body">
+                                        <h5 style="color: #242424;font-weight: normal;">Break Time Start</h5>
+                                        <h1 class="text-dark" id="break_time_start">00:00 --</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-flex flex-column align-items-center text-center">
+                                <div class="card border-0 shadow-lg w-100">
+                                    <div class="card-body">
+                                        <h5 style="color: #242424;font-weight: normal;">Break Out</h5>
+                                        <h1 class="text-dark" id="break_out">00:00 --</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 d-flex flex-column align-items-center text-center">
+                                <div class="card border-0 shadow-lg w-100">
+                                    <div class="card-body">
+                                        <h5 style="color: #242424;font-weight: normal;">Break In</h5>
+                                        <h1 class="text-dark" id="break_in">00:00 --</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="w-100 my-4">
-                            <input type="button" class="btn btn-primary btn-block font-weight-bold btn-lg" value="Break Out" id="break">
+                            <input type="button" class="btn btn-secondary btn-block font-weight-bold btn-lg shadow-sm" value="Break Out" id="break">
                         </div>
 
-                        <div class="text-center text-primary font-weight-bold" id="status" style="font-size: 150px;"></div>
-
+                        <div style="height: 350px;overflow: auto;display: none;" id="bt">
+                            <table class="table">
+                                <thead class="bg-light">
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Break Out</th>
+                                    <th scope="col">Break In</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="dataBreaks">
+                                  
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 bg-white d-flex justify-content-center p-0" style="height: 100vh;">
+        <div class="col-lg-6 bg-white d-flex p-0" style="height: 100vh;">
             <img id="image" alt="awd" class="img-fluid" src="./working.gif">
         </div>
     </div>
@@ -76,7 +114,7 @@
             const break_out = document.getElementById('break_out') // out
             const break_in = document.getElementById('break_in') // in
             const time_text = document.getElementById('time_text') // in
-            const breakStatus = document.getElementById('status') // in
+            // const breakStatus = document.getElementById('status') // in
             let breakButton = document.getElementById('break') // break button
 
             // ---------- interval -------------
@@ -91,20 +129,25 @@
                 const breakStorage = JSON.parse(storage)
                 const breakStorage2 = JSON.parse(storage2)
                 if(breakButton.classList.contains('break-in')){
-                    document.getElementById('image').src = './working.gif';
-                    breakStatus.innerHTML = "Working";
                     const breakInData = {
                         breakStart: breakStorage.breakStart,
                         breakEnd: moment(),
                         event: "In",
                     };
+
+                    var tableData = JSON.parse(localStorage.getItem('dataTable')) || [];
+
+                    const dataToPush = {
+                        in: breakStorage.breakStart,
+                        out: moment()
+                    }
+                    tableData.push(dataToPush);
+                    localStorage.setItem("dataTable", JSON.stringify(tableData));
                     
                     localStorage.setItem("breaktimeStorage", JSON.stringify(breakInData));
                     breakData()
                     CopyToClipboard('break_in')
                 }else{
-                    breakStatus.innerHTML = "On Break";
-                    document.getElementById('image').src = './tenor.gif';
                     const breakOutData = {
                         breakStart: moment(),
                         breakEnd: "Ongoing",
@@ -123,6 +166,7 @@
                     }
                     localStorage.setItem("totalBreakStorage", JSON.stringify(totalBreakData));
                     breakData()
+                    CopyToClipboard('break_out')
                 }
                 
             })
@@ -150,15 +194,15 @@
                 const breakStorage = JSON.parse(storage)
                 const breakStorage2 = JSON.parse(storage2)
                 const breakStorage3 = JSON.parse(storage3)
-                console.log(storage);
                 if(storage != null){
                     if(breakStorage.event == 'Out'){
-                        // monitor_output.style.fill = "black"
                         breakButton.value = "Break In";
                         breakButton.classList.add('break-in')
+                        // breakStatus.innerHTML = "On Break";
+                        document.getElementById('image').src = './tenor.gif';
                     }else{
+                        // breakStatus.innerHTML = "Working";
                         if(breakButton.value != 'Break Out'){
-                            // monitor_output.style.fill = "white"
                             breakButton.value = "Break Out";
                             breakButton.classList.remove('break-in')
                             var b_out = moment(breakStorage.breakStart)
@@ -182,11 +226,36 @@
 
                 if (breakStorage2 != null) {
                     break_time_start.innerHTML = moment(breakStorage2.breakTimeStart).format("h:mm:ss A")
-                    break_out.innerHTML = moment(breakStorage.breakStart).format("h:mm:ss A")
+                    // break_out.innerHTML = moment(breakStorage.breakStart).format("h:mm:ss A")
+                    break_out.innerHTML = 'Break' + ' ' + moment(breakStorage.breakStart).format("h:mm")
                     if(breakStorage.breakEnd == 'Ongoing'){
-                        break_in.innerHTML = "Ongoing"
+                        break_in.innerHTML = "Ongoing";
+                        const getstorage3 = localStorage.getItem("total");
+                        const getbreakStorage3 = JSON.parse(getstorage3)
+                        let sec = parseInt(getbreakStorage3.total)
+
+                        var duration = moment.duration(sec, 'seconds');
+                        var formatted = duration.format("hh:mm:ss", { trim: false });
+                        var computed = formatted.split(':')
+
+                        if(computed[0] == '00' && computed[1] != '00'){
+                            var computedTime = computed[1]
+                            var tt = 'mins'
+                            time_text.style.display = 'block'
+                        }else if(computed[1] == '00' && computed[0] == '00'){
+                            var computedTime = computed[2]
+                            var tt = 'sec'
+                            time_text.style.display = 'block'
+                        }else{
+                            var computedTime = computed[0]
+                            var tt = 'hour'
+                            time_text.style.display = 'block'
+                        }
+
+                        time_consume.innerHTML = computedTime
+                        time_text.innerHTML = tt
                     }else{
-                        break_in.innerHTML = '<span style="opacity:0;">in</span>' + ' ' + moment(breakStorage.breakEnd).format("h:mm")
+                        break_in.innerHTML = 'In' + ' ' + moment(breakStorage.breakEnd).format("h:mm")
 
                         const getstorage3 = localStorage.getItem("total");
                         const getbreakStorage3 = JSON.parse(getstorage3)
@@ -216,6 +285,18 @@
                 }
             }
             breakData()
+            const dataBreaks = document.querySelector('#dataBreaks');
+            var testt = JSON.parse(localStorage.getItem('dataTable')) || [];
+            if(document.querySelector('#dataBreaks').innerHTML != ''){
+                document.querySelector('#bt').style.display = 'block'
+            }
+            testt.forEach(function(data, index){
+                dataBreaks.innerHTML += `<tr>
+                                            <td>${(index == 0 ? 'Start' : index)}</td>
+                                            <td>${moment(data.in).format('h:mm:ss')}</td>
+                                            <td>${moment(data.out).format('h:mm:ss')}</td>
+                                        </tr>`;
+            })
 
             function reset(){
                 localStorage.clear()
@@ -224,6 +305,7 @@
                 break_time_start.innerHTML = '00:00 --'
                 break_out.innerHTML = '00:00 --'
                 break_in.innerHTML = '00:00 --'
+                document.querySelector('#bt').style.display = 'none'
             }
         </script>
     </body>
