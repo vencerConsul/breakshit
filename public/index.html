@@ -33,13 +33,32 @@
             .card{
                 background-color: #f0f0ff !important;
             }
+            /* width */
+            ::-webkit-scrollbar {
+            width: 2px;
+            }
+
+            /* Track */
+            ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            }
+            
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+            background: #888; 
+            }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+            }
         </style>
     </head>
     <body style="height:100vh;width:100%;">
 
     <div class="row p-0 m-0">
         <div class="col-lg-6" style="height: 100vh;background: #f0f0ff;">
-            <div class="card text-left my-4 bg-transparent w-100 border-0">
+            <div class="card my-4 bg-transparent w-100 border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-center align-items-center">
                         <div class="circle shadow-lg">
@@ -50,6 +69,9 @@
                     <h5 class="card-title my-2 text-center" style="color: #b9b9b9;font-weight: 200;" id="current_time">Loading....</h5>
                     <center><a href="#" class="text-center btn btn-sm btn-danger" onclick="reset()">Reset</a></center>
                     <hr>
+                    <div class="w-100 my-4">
+                        <input type="button" class="btn btn-secondary btn-block font-weight-bold btn-lg shadow-sm" value="Break Out" id="break">
+                    </div>
                     <div class="my-4">
                         <div class="row">
                             <div class="col-lg-4 d-flex flex-column align-items-center text-center">
@@ -77,23 +99,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="w-100 my-4">
-                            <input type="button" class="btn btn-secondary btn-block font-weight-bold btn-lg shadow-sm" value="Break Out" id="break">
-                        </div>
-
-                        <div style="height: 350px;overflow: auto;display: none;" id="bt">
-                            <table class="table">
-                                <thead class="bg-light">
-                                  <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Break Out</th>
-                                    <th scope="col">Break In</th>
-                                  </tr>
-                                </thead>
-                                <tbody id="dataBreaks">
-                                  
-                                </tbody>
-                            </table>
+                        <div class="card shadow-lg my-4" style="display: none;" id="bt">
+                            <div class="card-header font-weight-bold">Break Shiit Data</div>
+                            <div class="card-body position-relative p-0" style="max-height: 310px;overflow: auto;">
+                                <table class="table">
+                                    <thead class="sticky-top p-0" style="background-color: #e0e0ee;">
+                                      <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Break Out</th>
+                                        <th scope="col">Break In</th>
+                                        <th scope="col">Break Total</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody id="dataBreaks">
+                                      
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -291,10 +313,17 @@
                 document.querySelector('#bt').style.display = 'block'
             }
             testt.forEach(function(data, index){
+                let start = moment(data.in); // some random moment in time (in ms)
+                let end = moment(data.out); // some random moment after start (in ms)
+                let diff = end.diff(start);
+
+                // execution
+                let f = moment.utc(diff).format("HH:mm:ss");
                 dataBreaks.innerHTML += `<tr>
                                             <td>${(index == 0 ? 'Start' : index)}</td>
                                             <td>${moment(data.in).format('h:mm:ss')}</td>
                                             <td>${moment(data.out).format('h:mm:ss')}</td>
+                                            <td>${f}</td>
                                         </tr>`;
             })
 
